@@ -3,119 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>bcc</title>
+    <title>Right Triangle Quizzer</title>
     <style>
-        html, body { height: 100%; margin: 0; padding: 0; background: #f4f7f6; }
-        body { font-family: sans-serif; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .game-container { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%; max-width: 480px; text-align: center; position: relative; z-index: 10; box-sizing: border-box; }
-        .version-tag { position: absolute; top: 12px; left: 15px; font-size: 0.7rem; color: #bbb; font-weight: bold; font-family: monospace; }
-        h1 { margin-bottom: 5px; color: #1a1a1a; font-size: 2rem; margin-top: 10px; }
-        .subtitle { color: #777; margin-top: 0; margin-bottom: 25px; font-size: 0.95rem; }
-        .button-group { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
-        .btn { padding: 14px 20px; font-size: 1rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; position: relative; z-index: 20; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .easy { background-color: #2ec4b6; color: white; }
-        .medium { background-color: #ff9f1c; color: white; }
-        .hard { background-color: #e71d36; color: white; }
-        .action { background-color: #4361ee; color: white; width: 100%; }
-        .next { background-color: #4cc9f0; color: #1a1a1a; width: 100%; }
-        .back { background: none; color: #777; font-size: 0.85rem; margin-top: 25px; padding: 5px; width: auto; }
-        .card { background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 10px; padding: 30px 20px; margin: 20px 0; min-height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        #question-text, #answer-text { font-size: 1.1rem; font-weight: 500; line-height: 1.5; text-align: left; width: 100%; white-space: pre-line; }
-        #answer-text { color: #2b9348; font-weight: bold; margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 15px; }
-        .hidden { display: none !important; }
-        .badge { padding: 4px 10px; font-size: 0.75rem; border-radius: 50px; font-weight: bold; text-transform: uppercase; }
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #16a34a;
+            --error: #dc2626;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        .menu-btn, .action-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin: 8px 0;
+            transition: background-color 0.2s;
+        }
+
+        .menu-btn:hover, .action-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .quiz-box {
+            margin: 20px 0;
+        }
+
+        .question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+
+        .binary-options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .yes-btn { background-color: var(--success); }
+        .no-btn { background-color: var(--error); }
+        .yes-btn:hover { background-color: #15803d; }
+        .no-btn:hover { background-color: #b91c1c; }
+
+        .feedback {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .feedback.correct {
+            color: var(--success);
+            background-color: #f0fdf4;
+        }
+
+        .feedback.incorrect {
+            color: var(--error);
+            background-color: #fef2f2;
+        }
+
+        .back-btn {
+            background-color: transparent;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
+            margin-top: 15px;
+        }
+        .back-btn:hover {
+            background-color: #f1f5f9;
+        }
     </style>
 </head>
 <body>
 
-    <div class="game-container">
-        <div class="version-tag">Version 8.0</div>
-        <h1>bcc Challenge</h1>
-        <p class="subtitle">Official Waterloo Beaver Computing Challenge (Grades 9 & 10)</p>
-        
-        <!-- Difficulty Selection Screen -->
-        <div id="difficulty-screen">
-            <p>Select your challenge level to begin:</p>
-            <div class="button-group">
-                <button class="btn easy" onclick="startQuiz('easy')">Part A (Easy)</button>
-                <button class="btn medium" onclick="startQuiz('medium')">Part B (Medium)</button>
-                <button class="btn hard" onclick="startQuiz('hard')">Part C (Hard)</button>
-            </div>
-        </div>
-
-        <!-- Flashcard Display Screen -->
-        <div id="flashcard-screen" class="hidden">
-            <div class="card-meta">
-                <span id="level-badge" class="badge">Easy</span>
-            </div>
-            <div class="card">
-                <p id="question-text">Question goes here...</p>
-                <div id="answer-text" class="hidden">Answer goes here...</div>
-            </div>
-            <div class="action-buttons">
-                <button id="reveal-btn" class="btn action" onclick="revealAnswer()">Reveal Answer</button>
-                <button id="next-btn" class="btn next hidden" onclick="nextQuestion()">Next Question</button>
-            </div>
-            <button class="btn back" onclick="goBack()">&larr; Choose Another Level</button>
-        </div>
+<div class="container">
+    <!-- MENU VIEW -->
+    <div id="menu-view">
+        <h1>📐 Right Triangle Quizzer</h1>
+        <p>Select a mode to test your knowledge:</p>
+        <button class="menu-btn" onclick="startQuiz(1)">1. Find the Missing 3rd Side</button>
+        <button class="menu-btn" onclick="startQuiz(2)">2. Is it a Right Triangle?</button>
     </div>
 
-    <script>
-        // STRICT RULE: All data strings must be short and stay completely on one line.
-        var questionBank = {
-            easy: [
-                { q: "BCC Part A: Box 1 [CAN, BEAVERS, I], Box 2 [LOVE, LIKE, NEED], Box 3 [HELP, SWIM, WATER]. Which sentence is impossible?\n\n(A) I LOVE WATER\n(B) BEAVERS NEED HELP\n(C) YOU NEED ME", a: "ANSWER: (C) YOU NEED ME\n\nExplanation: 'ME' is not an available word option inside Box 3." }
-            ],
-            medium: [
-                { q: "BCC Part B: Line queue handles book returns by lowest quantity first. Luciano (4 books), Rui (6 books), Cene (3 books). Who gets helped second if Luciano starts first?\n\n(A) Luciano\n(B) Rui\n(C) Cene", a: "ANSWER: (C) Cene\n\nExplanation: Cene has only 3 books remaining to process, which is lower than Rui's 6 books." }
-            ],
-            hard: [
-                { q: "BCC Part C: An island has 16 grids. A device splits scanning zones in half, telling you 'yes' or 'no' if treasure is inside. What is the least number of scans needed to find the exact grid?\n\n(A) 4\n(B) 8\n(C) 16", a: "ANSWER: (A) 4\n\nExplanation: This is a binary search. Cutting 16 options in half repeatedly (16 -> 8 -> 4 -> 2 -> 1) takes exactly 4 steps." }
-            ]
-        };
-
-        var currentLevel = '';
-        var currentQuestionObj = null;
-
-        function startQuiz(level) {
-            currentLevel = level;
-            document.getElementById('difficulty-screen').classList.add('hidden');
-            document.getElementById('flashcard-screen').classList.remove('hidden');
+    <!-- QUIZ VIEW -->
+    <div id="quiz-view" class="hidden">
+        <div class="quiz-box">
+            <div id="question-text" class="question"></div>
             
-            var labelText = level === 'easy' ? 'Part A (Easy)' : level === 'medium' ? 'Part B (Medium)' : 'Part C (Hard)';
-            var badge = document.getElementById('level-badge');
-            badge.innerText = labelText;
-            badge.className = 'badge ' + level;
+            <!-- Input area for Mode 1 -->
+            <div id="mode1-input-area" class="hidden">
+                <input type="number" id="user-answer" placeholder="Enter your answer" onkeydown="if(event.key==='Enter') checkAnswer1()">
+                <button class="action-btn" onclick="checkAnswer1()">Submit Answer</button>
+            </div>
+
+            <!-- Input area for Mode 2 -->
+            <div id="mode2-input-area" class="hidden" class="binary-options">
+                <div class="binary-options">
+                    <button class="action-btn yes-btn" onclick="checkAnswer2(true)">Yes (Right Triangle)</button>
+                    <button class="action-btn no-btn" onclick="checkAnswer2(false)">No (Not Right Triangle)</button>
+                </div>
+            </div>
+
+            <div id="feedback-text" class="feedback hidden"></div>
+            <button id="next-btn" class="action-btn hidden" onclick="generateQuestion()">Next Question</button>
+        </div>
+        <button class="action-btn back-btn" onclick="showMenu()">← Back to Menu</button>
+    </div>
+</div>
+
+<script>
+    // All 50 Pythagorean triples from your "Sorted by Hypotenuse" list
+    const TRIPLES = [, [6, 8, 10], [5, 12, 13], [9, 12, 15], [8, 15, 17],
+, [7, 24, 25], [15, 20, 25], [10, 24, 26], [20, 21, 29],
+, [16, 30, 34], [21, 28, 35], [12, 35, 37], [15, 36, 39],
+, [9, 40, 41], [27, 36, 45], [14, 48, 50], [30, 40, 50],
+, [20, 48, 52], [28, 45, 53], [33, 44, 55], [40, 42, 58],
+, [11, 60, 61], [25, 60, 65], [39, 52, 65], [16, 63, 65],
+, [32, 60, 68], [42, 56, 70], [48, 55, 73], [24, 70, 74],
+, [45, 60, 75], [30, 72, 78], [48, 64, 80], [18, 80, 82],
+, [36, 77, 85], [40, 75, 85], [51, 68, 85], [60, 63, 87],
+, [54, 72, 90], [35, 84, 91], [57, 76, 95], [65, 72, 97]
+    ];
+
+    let currentMode = 0;
+    let currentCorrectAnswer;
+    let currentTripletState = [];
+
+    function showMenu() {
+        document.getElementById('menu-view').classList.remove('hidden');
+        document.getElementById('quiz-view').classList.add('hidden');
+    }
+
+    function startQuiz(mode) {
+        currentMode = mode;
+        document.getElementById('menu-view').classList.add('hidden');
+        document.getElementById('quiz-view').classList.remove('hidden');
+        generateQuestion();
+    }
+
+    function generateQuestion() {
+        // Reset element states
+        document.getElementById('feedback-text').classList.add('hidden');
+        document.getElementById('next-btn').classList.add('hidden');
+        document.getElementById('user-answer').value = '';
+        
+        const randomTriple = TRIPLES[Math.floor(Math.random() * TRIPLES.length)];
+        const [a, b, c] = randomTriple;
+
+        if (currentMode === 1) {
+            document.getElementById('mode1-input-area').classList.remove('hidden');
+            document.getElementById('mode2-input-area').classList.add('hidden');
             
-            nextQuestion();
+            const missingType = ['a', 'b', 'c'][Math.floor(Math.random() * 3)];
+            
+            if (missingType === 'a') {
+                document.getElementById('question-text').innerHTML = `Given a right triangle with:<br>side <b>b = ${b}</b> and hypotenuse <b>c = ${c}</b>.<br><br>What is side <b>a</b>?`;
+                currentCorrectAnswer = a;
+            } else if (missingType === 'b') {
+                document.getElementById('question-text').innerHTML = `Given a right triangle with:<br>side <b>a = ${a}</b> and hypotenuse <b>c = ${c}</b>.<br><br>What is side <b>b</b>?`;
+                currentCorrectAnswer = b;
+            } else {
+                document.getElementById('question-text').innerHTML = `Given a right triangle with:<br>legs <b>a = ${a}</b> and <b>b = ${b}</b>.<br><br>What is the hypotenuse <b>c</b>?`;
+                currentCorrectAnswer = c;
+            }
+        } 
+        else if (currentMode === 2) {
+            document.getElementById('mode1-input-area').classList.add('hidden');
+            document.getElementById('mode2-input-area').classList.remove('hidden');
+
+            const isRealTriple = Math.random() < 0.5;
+            let displaySides = [a, b, c];
+
+            if (!isRealTriple) {
+                // Modify one side value slightly so it fails the Pythagorean formula
+                const modifyIdx = Math.floor(Math.random() * 3);
+                const offset = Math.random() < 0.5 ? 1 : -1;
+                displaySides[modifyIdx] += offset;
+            }
+
+            // Shuffle display order so the longest side isn't always at the end
+            displaySides.sort(() => Math.random() - 0.5);
+            currentTripletState = [...displaySides];
+
+            document.getElementById('question-text').innerHTML = `Do these three side lengths form a right triangle?<br><br><span style="font-size: 1.8rem; color: #2563eb;">${displaySides.join(', ')}</span>`;
         }
+    }
 
-        function nextQuestion() {
-            var questions = questionBank[currentLevel];
-            var randomIndex = Math.floor(Math.random() * questions.length);
-            currentQuestionObj = questions[randomIndex];
-            
-            document.getElementById('question-text').innerText = currentQuestionObj.q;
-            
-            var answerElement = document.getElementById('answer-text');
-            answerElement.innerText = currentQuestionObj.a;
-            answerElement.classList.add('hidden');
-            
-            document.getElementById('reveal-btn').classList.remove('hidden');
-            document.getElementById('next-btn').classList.add('hidden');
-        }
+    // Checking handler for Mode 1 (Integer input)
+    function checkAnswer1() {
+        const userAnsElement = document.getElementById('user-answer');
+        const userAns = parseInt(userAnsElement.value.strip ? userAnsElement.value.strip() : userAnsElement.value);
+        
+        if (isNaN(userAns)) return;
 
-        function revealAnswer() {
-            document.getElementById('answer-text').classList.remove('hidden');
-            document.getElementById('reveal-btn').classList.add('hidden');
-            document.getElementById('next-btn').classList.remove('hidden');
-        }
+        const feedback = document.getElementById('feedback-text');
+        feedback.classList.remove('hidden');
 
-        function goBack() {
-            document.getElementById('flashcard-screen').classList.add('hidden');
-            document.getElementById('difficulty-screen').classList.remove('hidden');
+        if (userAns === currentCorrectAnswer) {
+            feedback.className = "feedback correct";
+            feedback.innerText = "✅ Correct!";
+        } else {
+            feedback.className = "feedback incorrect";
+            feedback.innerText = `❌ Incorrect. The correct answer was ${currentCorrectAnswer}.`;
         }
-    </script>
-</body>
-</html>
+        document.getElementById('next-btn').classList.remove('hidden');
+    }
+
+    // Checking handler for Mode 2 (Yes/No button)
+    function checkAnswer2(userSaysYes) {
+        // Calculate true mathematical fact to catch edge cases
+        const sorted = [...currentTripletState].sort((x, y) => x - y);
