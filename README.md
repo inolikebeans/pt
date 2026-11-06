@@ -1,1 +1,1 @@
-# bcc
+# pythagorean triplets
