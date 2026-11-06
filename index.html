@@ -264,3 +264,15 @@
     function checkAnswer2(userSaysYes) {
         // Calculate true mathematical fact to catch edge cases
         const sorted = [...currentTripletState].sort((x, y) => x - y);
+const isRightTriangle = (Math.pow(sorted[0], 2) + Math.pow(sorted[1], 2) === Math.pow(sorted[2], 2));
+const feedback = document.getElementById('feedback-text');
+feedback.classList.remove('hidden');
+if (userSaysYes === isRightTriangle) {
+feedback.className = "feedback correct";
+feedback.innerText = "✅ Correct!";
+} else {
+feedback.className = "feedback incorrect";
+feedback.innerText = ❌ Incorrect. It is ${isRightTriangle ? 'indeed' : 'NOT'} a right triangle.;
+}
+document.getElementById('next-btn').classList.remove('hidden');
+}
